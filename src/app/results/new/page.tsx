@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { apiRequest } from "@/lib/api";
+import { apiRequest, ApiError } from "@/lib/api";
+import { toErrorMessage } from "@/lib/errors";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { toErrorMessage } from "@/lib/errors";
 
 type Paginated<T> = { data: T[] };
 type EventRow = { id: string; name: string; start_date: string };
@@ -17,6 +17,7 @@ export default function NewResultPage() {
   const [loading, setLoading] = useState(true);
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
 
   const [form, setForm] = useState({
     event_id: "",
@@ -33,6 +34,7 @@ export default function NewResultPage() {
     async function load() {
       setLoading(true);
       setErr(null);
+      setFieldErrors({});
       try {
         const [e, a] = await Promise.all([
           apiRequest<Paginated<EventRow>>("/events"),
@@ -43,19 +45,22 @@ export default function NewResultPage() {
         setAthletes(a.data ?? []);
       } catch (e: unknown) {
         if (!active) return;
-        setErr(e.message ?? "Kunne ikke laste data");
+        setErr(toErrorMessage(e, "Kunne ikke laste data"));
       } finally {
         if (active) setLoading(false);
       }
     }
     load();
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setMsg(null);
     setErr(null);
+    setFieldErrors({});
     try {
       await apiRequest("/performances", {
         method: "POST",
@@ -76,7 +81,12 @@ export default function NewResultPage() {
       setMsg("Resultat registrert ✅");
       setForm({ ...form, mark_display: "", wind: "" });
     } catch (e: unknown) {
-      setErr(e.message ?? "Kunne ikke lagre");
+      if (e instanceof ApiError && e.status === 422 && e.errors) {
+        setFieldErrors(e.errors);
+        setErr(e.message);
+      } else {
+        setErr(toErrorMessage(e, "Ukjent feil"));
+      }
     }
   }
 
@@ -101,12 +111,15 @@ export default function NewResultPage() {
               required
             >
               <option value="">Velg stevne…</option>
-              {events.map((e) => (
-                <option key={e.id} value={e.id}>
-                  {e.name} — {e.start_date}
+              {events.map((ev) => (
+                <option key={ev.id} value={ev.id}>
+                  {ev.name} — {ev.start_date}
                 </option>
               ))}
             </select>
+            {fieldErrors.event_id?.length ? (
+              <p className="text-sm text-red-600">{fieldErrors.event_id[0]}</p>
+            ) : null}
           </div>
 
           {/* Utøver */}
@@ -126,6 +139,9 @@ export default function NewResultPage() {
                 </option>
               ))}
             </select>
+            {fieldErrors.athlete_id?.length ? (
+              <p className="text-sm text-red-600">{fieldErrors.athlete_id[0]}</p>
+            ) : null}
           </div>
 
           {/* Øvelse */}
@@ -138,6 +154,9 @@ export default function NewResultPage() {
               placeholder="100m, 200m, LJ …"
               required
             />
+            {fieldErrors.discipline_code?.length ? (
+              <p className="text-sm text-red-600">{fieldErrors.discipline_code[0]}</p>
+            ) : null}
           </div>
 
           {/* Resultat */}
@@ -150,6 +169,9 @@ export default function NewResultPage() {
               placeholder='f.eks. "11.72" eller "1:59.12"'
               required
             />
+            {fieldErrors.mark_display?.length ? (
+              <p className="text-sm text-red-600">{fieldErrors.mark_display[0]}</p>
+            ) : null}
           </div>
 
           {/* Vind */}
@@ -161,6 +183,9 @@ export default function NewResultPage() {
               onChange={(e) => setForm({ ...form, wind: e.target.value })}
               placeholder="0.8"
             />
+            {fieldErrors.wind?.length ? (
+              <p className="text-sm text-red-600">{fieldErrors.wind[0]}</p>
+            ) : null}
           </div>
 
           <Button
