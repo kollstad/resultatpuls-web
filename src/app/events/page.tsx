@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import Pagination from "@/components/pagination";
+import { toErrorMessage } from "@/lib/errors";
 
 type Paginated<T> = {
   data: T[];
@@ -61,7 +62,7 @@ export default function EventsPage() {
         const res = await apiRequest<Paginated<EventRow>>(`/events?${params.toString()}`);
         if (!active) return;
         setList(res);
-      } catch (e: any) {
+      } catch (e: unknown) {
         if (!active) return;
         setErr(e.message ?? "Kunne ikke laste stevner");
       } finally {

@@ -5,6 +5,7 @@ import { apiRequest } from "@/lib/api";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { toErrorMessage } from "@/lib/errors";
 
 type Paginated<T> = { data: T[] };
 type EventRow = { id: string; name: string; start_date: string };
@@ -40,7 +41,7 @@ export default function NewResultPage() {
         if (!active) return;
         setEvents(e.data ?? []);
         setAthletes(a.data ?? []);
-      } catch (e: any) {
+      } catch (e: unknown) {
         if (!active) return;
         setErr(e.message ?? "Kunne ikke laste data");
       } finally {
@@ -51,7 +52,7 @@ export default function NewResultPage() {
     return () => { active = false; };
   }, []);
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setMsg(null);
     setErr(null);
@@ -74,7 +75,7 @@ export default function NewResultPage() {
       });
       setMsg("Resultat registrert ✅");
       setForm({ ...form, mark_display: "", wind: "" });
-    } catch (e: any) {
+    } catch (e: unknown) {
       setErr(e.message ?? "Kunne ikke lagre");
     }
   }

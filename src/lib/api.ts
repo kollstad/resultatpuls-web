@@ -43,9 +43,8 @@ export async function apiRequest<T>(path: string, opts?: RequestOptions): Promis
   const headers = buildHeaders(method);
 
   if (process.env.NODE_ENV !== "production") {
-    // eslint-disable-next-line no-console
-    console.log("[apiRequest]", method, url);
-  }
+  console.debug("[apiRequest]", method, url);
+}
 
   let res: Response;
   try {
