@@ -64,7 +64,7 @@ export default function EventsPage() {
         setList(res);
       } catch (e: unknown) {
         if (!active) return;
-        setErr(e.message ?? "Kunne ikke laste stevner");
+        setErr(toErrorMessage(e, "Kunne ikke laste stevner"));
       } finally {
         if (active) setLoading(false);
       }
