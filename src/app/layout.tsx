@@ -34,6 +34,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               <Link href="/results" className="text-sm hover:underline">Resultater</Link>
               <Link href="/clubs" className="text-sm hover:underline">Klubber</Link>
               <Link href="/athletes" className="text-sm hover:underline">Utøvere</Link>
+              <Link href="/status" className="text-sm hover:underline">Status</Link>
               <Link href={DOCS_URL} target="_blank" rel="noopener noreferrer" className="text-sm hover:underline">API-dokumentasjon</Link>
             </div>
           </nav>
