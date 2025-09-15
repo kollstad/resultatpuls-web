@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Logo from "@/components/Logo";
 import { BRAND_NAME, BRAND_TAGLINE } from "@/components/brand";
-
+import ApiStatus from "@/components/ApiStatus";
 
 export default function HomePage() {
   return (
