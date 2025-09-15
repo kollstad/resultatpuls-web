@@ -35,7 +35,16 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               <Link href="/clubs" className="text-sm hover:underline">Klubber</Link>
               <Link href="/athletes" className="text-sm hover:underline">Utøvere</Link>
               <Link href="/status" className="text-sm hover:underline">Status</Link>
-              <Link href={DOCS_URL} target="_blank" rel="noopener noreferrer" className="text-sm hover:underline">API-dokumentasjon</Link>
+              <Link href="https://api.resultatpuls.no/docs" target="_blank" rel="noreferrer" className="hover:underline"><html lang="en">
+              <head>
+                <meta charset="UTF-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                <title>Document</title>
+              </head>
+              <body>
+                
+              </body>
+              </html>-dokumentasjon</Link>
             </div>
           </nav>
         </header>
@@ -50,7 +59,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <div className="mx-auto max-w-6xl px-4 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-zinc-600">
             <p>© {new Date().getFullYear()} {BRAND_NAME}. Utviklet av <a href="https://fiko.no" target="_blank" rel="noopener noreferrer" className="underline">Fiko</a>.</p>
             <div className="flex gap-4">
-              <Link href={DOCS_URL} target="_blank" rel="noopener noreferrer" className="text-sm hover:underline">API-dokumentasjon</Link>
+              <Link href="https://api.resultatpuls.no/docs" target="_blank" rel="noreferrer" className="hover:underline">API-dokumentasjon</Link>
               <Link href="/about" className="hover:underline">Om prosjektet</Link>
             </div>
           </div>

@@ -20,7 +20,6 @@ function normalizeUrl(pathOrUrl: string) {
   if (!BASE) return pathOrUrl;
   if (pathOrUrl.startsWith("http")) return pathOrUrl;
   const hasLeadingSlash = pathOrUrl.startsWith("/");
-  // Unngå // i midten
   return hasLeadingSlash ? `${BASE}${pathOrUrl}` : `${BASE}/${pathOrUrl}`;
 }
 
@@ -34,11 +33,11 @@ async function fetchWithTiming(input: RequestInfo | URL, init?: RequestInit) {
 export default function StatusGrid() {
   const targets = useMemo(
     () => [
-      { key: "ping", label: "Ping", url: normalizeUrl("/ping") },
-      { key: "events", label: "Events", url: normalizeUrl("/events?per_page=1") },
-      { key: "clubs", label: "Clubs", url: normalizeUrl("/clubs?per_page=1") },
-      { key: "athletes", label: "Athletes", url: normalizeUrl("/athletes?per_page=1") },
-      { key: "performances", label: "Performances", url: normalizeUrl("/performances?per_page=1") },
+      { key: "ping",          label: "Ping",          url: normalizeUrl("/ping") },
+      { key: "events",        label: "Events",        url: normalizeUrl("/events?per_page=1") },
+      { key: "clubs",         label: "Clubs",         url: normalizeUrl("/clubs?per_page=1") },
+      { key: "athletes",      label: "Athletes",      url: normalizeUrl("/athletes?per_page=1") },
+      { key: "performances",  label: "Performances",  url: normalizeUrl("/performances?per_page=1") },
     ],
     []
   );
@@ -87,9 +86,8 @@ export default function StatusGrid() {
   }, [runAll]);
 
   const overallOk =
-    Object.keys(results).length === 0
-      ? false
-      : Object.values(results).every((r) => r.ok);
+    Object.keys(results).length > 0 &&
+    Object.values(results).every((r) => r.ok);
 
   return (
     <Card className="rounded-2xl shadow-md border border-white/60 bg-white/70 backdrop-blur-xl">
@@ -115,7 +113,10 @@ export default function StatusGrid() {
               >
                 <div className="flex items-center justify-between mb-1">
                   <div className="font-medium">{t.label}</div>
-                  <Badge variant={ok ? "default" : "destructive"} className={ok ? "bg-green-600 hover:bg-green-600" : ""}>
+                  <Badge
+                    variant={ok ? "default" : "destructive"}
+                    className={ok ? "bg-green-600 hover:bg-green-600" : ""}
+                  >
                     {ok ? "OK" : "Nede"}
                   </Badge>
                 </div>
